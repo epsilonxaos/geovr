@@ -29,8 +29,8 @@ var bS,glS,tS;
 
 function init() {
 	// Camara
-	cameraPerspectiveHelper = new THREE.CameraHelper( camera );
 	camera = new PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.005, 1000 );
+	cameraPerspectiveHelper = new THREE.CameraHelper( camera );
 	camera.position.z = 1;
 	camera.position.y = 5;
 	
