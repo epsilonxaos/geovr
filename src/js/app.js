@@ -29,11 +29,10 @@ var bS,glS,tS;
 
 function init() {
 	// Camara
+	cameraPerspectiveHelper = new THREE.CameraHelper( camera );
 	camera = new PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.005, 1000 );
 	camera.position.z = 1;
 	camera.position.y = 5;
-
-	cameraPerspectiveHelper = new THREE.CameraHelper( camera );
 	
 
 	// Escena
@@ -44,11 +43,9 @@ function init() {
 
 	groupS = new Group();
 	dataGeometry.forEach((item, idx)=> {
-		
 		let groupG = new THREE.Object3D();
 		let geomData = [];
 		let vertices = JSON.parse(item.vertices);
-		let holes = item.hasOwnProperty('huecos') ? JSON.parse(item.huecos) : [];
 		let position = JSON.parse(item.position);
 
 		
@@ -58,12 +55,7 @@ function init() {
 				geomData.push(v2);
 			});
 		}
-
-		// if(idx > 0) {
-		// 	return;
-		// };
-
-		// const length = 12, width = 8;
+		
 		let shape = new Shape(geomData);
 
 		const extrudeSettings = {
@@ -76,27 +68,15 @@ function init() {
 			bevelSegments: 1
 		};
 
-		// let geometry = new THREE.BufferGeometry(geomData);
-
         let geometry = new ExtrudeGeometry(shape, extrudeSettings);
         geometry
 			.rotateY(3.14159)
 			.rotateX(1.5708)
 			.rotateZ(0)
 			.translate(position[0] * -1, 0, position[1]);
-
-		// console.log(geomData);
-		// let bufferGeo = new THREE.BufferGeometry().setFromPoints(geomData);
-		// console.log(bufferGeo);
-		// let displacement = new Float32Array(bufferGeo.attributes.position.count);
-		// bufferGeo.setAttribute('displacement', new THREE.BufferAttribute(displacement, 1));
-
-		// console.log(bufferGeo);
 			
 		let material = new MeshBasicMaterial( { color: 0x072944 } );
-		// let material = new MeshPhongMaterial( { side: DoubleSide, color: 0x310C0C, combine: false,  emissive: 0x0C051C, flatShading: false} );
 		let mesh = new Mesh(geometry, material);
-		// let mesh = new Mesh(bufferGeo, material);
 
 		if(idx == 0) {
 			cameraPosition = getCenterPoint(mesh)
@@ -109,7 +89,6 @@ function init() {
 		groupG.add(mesh);
 
 		groupS.add(groupG);
-		geomData = []
 	});
 	
 	addPointsOrientation();
