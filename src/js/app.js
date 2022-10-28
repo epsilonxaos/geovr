@@ -42,13 +42,6 @@ function init() {
 	scene.add(new AmbientLight(0x444));
 
 
-	const targetGeometryCentroide = new THREE.SphereGeometry(0.01);
-	const targetMaterialCentroide = new THREE.MeshBasicMaterial({ color: 0x006420 });
-	let targetCentroide = new THREE.Mesh(targetGeometryCentroide, targetMaterialCentroide);
-	let res = getCenterPoint(targetCentroide);
-	scene.add(targetCentroide);
-
-
 	groupS = new Group();
 	dataGeometry.forEach((item, idx)=> {
 		
@@ -119,23 +112,9 @@ function init() {
 		geomData = []
 	});
 	
-
-	const targetGeometry = new THREE.SphereGeometry(0.2);
-	const targetMaterial = new THREE.MeshBasicMaterial({
-	  color: 0xff0000
-	});
-	
-	target = new THREE.Mesh(targetGeometry, targetMaterial);
-	generateTarget();
-  	scene.add(target);
-
-	let grid = new THREE.GridHelper(50, 50, 0x808080, 0x808080); // xy-grid
-		grid.geometry.rotateX(Math.PI * 5);
-		scene.add(grid);
-
-	scene.add(groupS);
-
-	addLights()
+	addPointsOrientation();
+	addGridHelper();
+	addLights();
 
 	// Renderizado
 	renderer = new WebGLRenderer({antialias: true});
@@ -143,6 +122,67 @@ function init() {
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild(renderer.domElement);
 
+	panelStats();
+
+	// Controles de camara
+
+	controls = new OrbitControls( camera, renderer.domElement );
+	// controls.target.set(cameraPosition.x * -1,
+	// 	0,
+	// 	cameraPosition.z * -1
+	// );
+	// controls.update()
+	// controls = new DragControls( groupS, camera, renderer.domElement )
+	// controls = new FlyControls( camera, renderer.domElement );
+	// controls.movementSpeed = 0.05;
+	// controls.rollSpeed = 0.01;
+	// controls.autoForward = false;
+	// controls.dragToLook = true;
+	// controls.lookVertical = true;
+	// controls.lookAt(cameraPosition[0], 5, cameraPosition[1] );
+
+}
+
+function addPointsOrientation() {
+	const targetGeometryCentroide = new THREE.SphereGeometry(0.01);
+	const targetMaterialCentroide = new THREE.MeshBasicMaterial({ color: 0x006420 });
+	let targetCentroide = new THREE.Mesh(targetGeometryCentroide, targetMaterialCentroide);
+	scene.add(targetCentroide);
+	
+	const targetGeometry = new THREE.SphereGeometry(0.2);
+	const targetMaterial = new THREE.MeshBasicMaterial({
+	  color: 0xff0000
+	});
+
+	target = new THREE.Mesh(targetGeometry, targetMaterial);
+	generateTarget();
+  	scene.add(target);
+}
+
+function addGridHelper() {
+	let grid = new THREE.GridHelper(50, 50, 0x808080, 0x808080); // xy-grid
+		grid.geometry.rotateX(Math.PI * 5);
+		scene.add(grid);
+
+	scene.add(groupS);
+}
+
+function addLights() {
+	// Lights
+	const lights = [];
+	lights[ 0 ] = new PointLight( 0xffffff, 0.8, 0);
+	lights[ 1 ] = new PointLight( 0xffffff, 1, 0 );
+	lights[ 2 ] = new PointLight( 0xffffff, 1, 0 );
+
+	lights[ 0 ].position.set( 0, 200, 0 );
+	lights[ 1 ].position.set( 100, 200, 100 );
+	lights[ 2 ].position.set( - 100, - 200, - 100 );
+
+	scene.add( lights[ 0 ] );
+	scene.add( lights[ 2 ] );	
+}
+
+function panelStats() {
 	bS = new BrowserStats();
     glS = new glStats();
     tS = new threeStats( renderer );
@@ -170,43 +210,6 @@ function init() {
             glS
         ]
     } );
-
-	// Controles de camara
-	// camera.position.set(cameraPosition[0], 0.6, cameraPosition[1])
-	// camera.position.x = cameraPosition[0] + -1
-	// camera.position.z = cameraPosition[1] + -1
-
-	// controls = new TrackballControls( camera, renderer.domElement );
-	controls = new OrbitControls( camera, renderer.domElement );
-	// controls.target.set(cameraPosition.x * -1,
-	// 	0,
-	// 	cameraPosition.z * -1
-	// );
-	// controls.update()
-	// controls = new DragControls( groupS, camera, renderer.domElement )
-	// controls = new FlyControls( camera, renderer.domElement );
-	// controls.movementSpeed = 0.05;
-	// controls.rollSpeed = 0.01;
-	// controls.autoForward = false;
-	// controls.dragToLook = true;
-	// controls.lookVertical = true;
-	// controls.lookAt(cameraPosition[0], 5, cameraPosition[1] );
-
-}
-
-function addLights() {
-	// Lights
-	const lights = [];
-	lights[ 0 ] = new PointLight( 0xffffff, 0.8, 0);
-	lights[ 1 ] = new PointLight( 0xffffff, 1, 0 );
-	lights[ 2 ] = new PointLight( 0xffffff, 1, 0 );
-
-	lights[ 0 ].position.set( 0, 200, 0 );
-	lights[ 1 ].position.set( 100, 200, 100 );
-	lights[ 2 ].position.set( - 100, - 200, - 100 );
-
-	scene.add( lights[ 0 ] );
-	scene.add( lights[ 2 ] );	
 }
 
 function getCenterPoint(mesh) {
