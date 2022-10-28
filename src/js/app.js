@@ -66,9 +66,9 @@ function init() {
 			});
 		}
 
-		if(idx == 0) {
-			console.log(geomData);
-		};
+		// if(idx > 0) {
+		// 	return;
+		// };
 
 		// const length = 12, width = 8;
 		let shape = new Shape(geomData);
@@ -92,15 +92,18 @@ function init() {
 			.rotateZ(0)
 			.translate(position[0] * -1, 0, position[1]);
 
-		
-		// let bufferGeo = new THREE.BufferGeometry().setFromPoints(geometry);
+		// console.log(geomData);
+		// let bufferGeo = new THREE.BufferGeometry().setFromPoints(geomData);
+		// console.log(bufferGeo);
 		// let displacement = new Float32Array(bufferGeo.attributes.position.count);
+		// bufferGeo.setAttribute('displacement', new THREE.BufferAttribute(displacement, 1));
 
-		// console.log(displacement);
+		// console.log(bufferGeo);
 			
 		let material = new MeshBasicMaterial( { color: 0x072944 } );
 		// let material = new MeshPhongMaterial( { side: DoubleSide, color: 0x310C0C, combine: false,  emissive: 0x0C051C, flatShading: false} );
 		let mesh = new Mesh(geometry, material);
+		// let mesh = new Mesh(bufferGeo, material);
 
 		if(idx == 0) {
 			cameraPosition = getCenterPoint(mesh)
@@ -113,6 +116,7 @@ function init() {
 		groupG.add(mesh);
 
 		groupS.add(groupG);
+		geomData = []
 	});
 	
 
@@ -131,18 +135,7 @@ function init() {
 
 	scene.add(groupS);
 
-	// Lights
-	const lights = [];
-	lights[ 0 ] = new PointLight( 0xffffff, 0.8, 0);
-	lights[ 1 ] = new PointLight( 0xffffff, 1, 0 );
-	lights[ 2 ] = new PointLight( 0xffffff, 1, 0 );
-
-	lights[ 0 ].position.set( 0, 200, 0 );
-	lights[ 1 ].position.set( 100, 200, 100 );
-	lights[ 2 ].position.set( - 100, - 200, - 100 );
-
-	scene.add( lights[ 0 ] );
-	scene.add( lights[ 2 ] );	
+	addLights()
 
 	// Renderizado
 	renderer = new WebGLRenderer({antialias: true});
@@ -201,6 +194,21 @@ function init() {
 
 }
 
+function addLights() {
+	// Lights
+	const lights = [];
+	lights[ 0 ] = new PointLight( 0xffffff, 0.8, 0);
+	lights[ 1 ] = new PointLight( 0xffffff, 1, 0 );
+	lights[ 2 ] = new PointLight( 0xffffff, 1, 0 );
+
+	lights[ 0 ].position.set( 0, 200, 0 );
+	lights[ 1 ].position.set( 100, 200, 100 );
+	lights[ 2 ].position.set( - 100, - 200, - 100 );
+
+	scene.add( lights[ 0 ] );
+	scene.add( lights[ 2 ] );	
+}
+
 function getCenterPoint(mesh) {
     var geometry = mesh.geometry;
     geometry.computeBoundingBox();
@@ -212,65 +220,24 @@ function getCenterPoint(mesh) {
 
 function animate() {
 	requestAnimationFrame(animate);
-
 	rS( 'frame' ).start();
     glS.start();
-
     rS( 'rAF' ).tick();
     rS( 'FPS' ).frame();
-
     rS( 'texture' ).start();
-    // var m = 10;// + 3000 * Math.sin( .001 * Date.now() );
-    // for( var j = 0; j < m; j++ ) {
-    //     ctx.fillStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
-    //     var x = Math.random() * scene.width,
-    //         y = Math.random() * scene.height,
-    //         w = Math.random() * scene.width,
-    //         h = Math.random() * scene.height;
-    //     ctx.fillRect( x, y, w, h );
-    // }
-    // mat.map.needsUpdate = true;
     rS( 'texture' ).end();
-
     rS( 'setup' ).start();
-
-    // if( nfov < 1 ) nfov = 1;
-    // if( nfov > 150 ) nfov = 150;
-
-    // lon += ( nlon - lon ) * .2;
-    // lat += ( nlat - lat ) * .2;
-    // fov += ( nfov - fov ) * .2;
-
-    // camera.projectionMatrix.makePerspective( fov, window.innerWidth / window.innerHeight, camera.near, camera.far );
-
-    // lat = Math.max( - 85, Math.min( 85, lat ) );
-    // phi = ( 90 - lat ) * Math.PI / 180;
-    // theta = lon * Math.PI / 180;
-
-    // camera.position.x = 100 * Math.sin( phi ) * Math.cos( theta );
-    // camera.position.y = 100 * Math.cos( phi );
-    // camera.position.z = 100 * Math.sin( phi ) * Math.sin( theta );
-
-    // camera.lookAt( scene.position );
-
     rS( 'setup' ).end();
-
     rS( 'render' ).start();
-    // renderer.render( scene, camera );
     rS( 'render' ).end();
-
     rS( 'frame' ).end();
-
-    /*rS( 'memory.limit' ).set( performance.memory.jsHeapSizeLimit );
-    rS( 'memory.used' ).set( performance.memory.usedJSHeapSize );
-    rS( 'memory.total' ).set( performance.memory.totalJSHeapSize );*/
-
     rS( 'rStats' ).start();
     rS().update();
     rS( 'rStats' ).end();
 
-	stats.begin();
-	stats.end();
+	// stats.begin();
+	// stats.end();
+
 	if (groupS !== undefined && !groupS.quaternion.equals(targetQuaternion)) {
 		const step = 2;
 		groupS.quaternion.rotateTowards(targetQuaternion, step);
