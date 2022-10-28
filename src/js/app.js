@@ -126,6 +126,7 @@ function addPointsOrientation() {
 	const targetGeometryCentroide = new THREE.SphereGeometry(0.01);
 	const targetMaterialCentroide = new THREE.MeshBasicMaterial({ color: 0x006420 });
 	let targetCentroide = new THREE.Mesh(targetGeometryCentroide, targetMaterialCentroide);
+	targetCentroide.position.y = 0.05
 	scene.add(targetCentroide);
 	
 	const targetGeometry = new THREE.SphereGeometry(0.2);
